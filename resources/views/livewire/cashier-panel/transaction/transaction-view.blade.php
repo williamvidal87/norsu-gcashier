@@ -39,6 +39,37 @@
                 </div>
             </div>
         </div>
+
+        {{-- start test --}}
+        @if($this->mode_of_payment_id==2)
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="check_bank">Drawee Bank</label>
+                    <input type="text" class="form-control" id="check_bank" wire:model="check_bank" disabled>
+                    @error('check_bank') <span style="color: red">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="check_number">Check Number</label>
+                    <input type="text" class="form-control" id="check_number" wire:model="check_number" disabled>
+                    @error('check_number') <span style="color: red">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="check_date">Check Date</label>
+                    <input type="date" class="form-control" id="check_date" wire:model="check_date" disabled>
+                    @error('check_date') <span style="color: red">{{ $message }}</span> @enderror
+                </div>
+            </div>
+        </div>
+        @else
+        <div></div>
+        @endif
+        {{-- end test --}}
+
         <div class="form-group">
             <table class="table" id="products_table">
                 <thead>
@@ -174,7 +205,14 @@
                 </tfoot>
             </table>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-4">
+                    <label for="note">Note:</label>
+                    <div class="form-group">
+                        <textarea id="note" class="form-control" wire:model="note" style="width: 3.50in;height: 1in" disabled></textarea>
+                        @error('note') <span style="color: red">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             </div>
         </div>

@@ -22,7 +22,11 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('cashier_id');
             $table->string('remark')->nullable();
             $table->date('date')->nullable();
-            
+            $table->string('check_bank')->nullable();
+            $table->string('check_number')->nullable();
+            $table->date('check_date')->nullable();
+            $table->string('note')->nullable();
+
             // $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('mode_of_payment_id')->references('id')->on('mode_of_payments');
             $table->foreign('cashier_id')->references('id')->on('users');

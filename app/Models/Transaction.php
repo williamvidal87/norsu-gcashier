@@ -16,9 +16,14 @@ class Transaction extends Model
         'cashier_id',
         'remark',
         'status_id',
-        'date'
+        'date',
+        'check_bank',
+        'check_number',
+        'check_date',
+        'note',
+
     ];
-    
+
     public function getStudent()
     {
         return $this->belongsTo(Student::class,'student_id');

@@ -14,34 +14,34 @@ class StudentSeeder extends Seeder
      */
     public function run()
     {
-        $student = [
-            [ 
-            'first_name'    => 'Danica',
-            'last_name'     => 'Estoconing',
-            'course_id'     => 1,
-            ],
-            [ 
-            'first_name'    => 'Dorerose',
-            'last_name'     => 'Medez',
-            'course_id'     => 1,
-            ],
-            [ 
-            'first_name'    => 'Jeaniza',
-            'last_name'     => 'Panoncial',
-            'course_id'     => 1,
-            ],
-            [ 
-            'first_name'    => 'Jegloven',
-            'last_name'     => 'Maribong',
-            'course_id'     => 1,
-            ],
-            [ 
-            'first_name'    => 'Melrose',
-            'last_name'     => 'Tumarong',
-            'course_id'     => 1,
-            ],
-        ];
+        // $student = [
+        //     [ 
+        //     'first_name'    => 'Danica',
+        //     'last_name'     => 'Estoconing',
+        //     'course_id'     => 1,
+        //     ],
+        //     [ 
+        //     'first_name'    => 'Dorerose',
+        //     'last_name'     => 'Medez',
+        //     'course_id'     => 1,
+        //     ],
+        //     [ 
+        //     'first_name'    => 'Jeaniza',
+        //     'last_name'     => 'Panoncial',
+        //     'course_id'     => 1,
+        //     ],
+        //     [ 
+        //     'first_name'    => 'Jegloven',
+        //     'last_name'     => 'Maribong',
+        //     'course_id'     => 1,
+        //     ],
+        //     [ 
+        //     'first_name'    => 'Melrose',
+        //     'last_name'     => 'Tumarong',
+        //     'course_id'     => 1,
+        //     ],
+        // ];
         
-        Student::insert($student);
+        // Student::insert($student);
     }
 }

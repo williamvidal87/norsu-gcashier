@@ -16,9 +16,9 @@ class PaymentDetailForm extends Component
             $purpose,
             $price;
     public  $PaymentDetailID;
-    
+
     protected $listeners = ['editPaymentDetailData'];
-    
+
     public function render()
     {
         return view('livewire.admin-panel.manage-services.payment-detail-form',[
@@ -36,7 +36,7 @@ class PaymentDetailForm extends Component
         $this->price                    = $DATA['price'];
 
     }
-    
+
     public function store()
     {
         $this->validate([
@@ -45,14 +45,18 @@ class PaymentDetailForm extends Component
             'purpose'               => '',
             'price'                 => ''
         ]);
-        
+
         $this->data = ([
             'payment_categories_id' => $this->payment_categories_id,
             'payment_detail_name'   => $this->payment_detail_name,
             'purpose'               => $this->purpose,
             'price'                 => $this->price
         ]);
-        
+
+        if ($this->price=='') {
+            $this->data['price']=null;
+        }
+
         try {
             if($this->PaymentDetailID){
                 PaymentDetail::find($this->PaymentDetailID)->update($this->data);
@@ -64,7 +68,7 @@ class PaymentDetailForm extends Component
                     'created_at'    =>  date('Y-m-d H:i:s')
                 ]);
                 UserActivityLogsDatabase::create($log_data);
-                
+
             }else{
                 $show=PaymentDetail::create($this->data);
                 $this->emit('alert_store');
@@ -75,9 +79,9 @@ class PaymentDetailForm extends Component
                     'created_at'    =>  date('Y-m-d H:i:s')
                     ]);
                 UserActivityLogsDatabase::create($log_data);
-                
+
             }
-            
+
         } catch (\Exception $e) {
 			dd($e);
 			return back();
@@ -89,8 +93,8 @@ class PaymentDetailForm extends Component
         $this->resetErrorBag();
         $this->resetValidation();
     }
-    
-    
+
+
     public function closePaymentDetailForm(){
         $this->emit('closePaymentDetailModal');
         $this->emit('refresh_paymentdetail_table');

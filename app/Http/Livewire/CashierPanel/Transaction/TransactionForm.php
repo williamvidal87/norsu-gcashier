@@ -21,7 +21,11 @@ class TransactionForm extends Component
     public  $receipt_no,
             $payor_name,
             $mode_of_payment_id,
-            $date;
+            $date,
+            $check_bank,
+            $check_number,
+            $check_date,
+            $note;
     public  $TransactionID;
     public  $orderProducts = [];
     public  $payment_categories_id = [];
@@ -29,22 +33,22 @@ class TransactionForm extends Component
     public  $qty = [];
     public  $price = [];
     public  $total_all = 0;
-    
+
     protected $listeners = [
     'editTransactionData'
     ];
-    
+
     public function addProduct()
     {
         $this->orderProducts[] = ['id'=>'','transaction_id' => '','payment_categories_id'=>'', 'payment_detail_id' => '', 'qty' => '1', 'price' => ''];
     }
 
     public function removeProduct($index)
-    {   
+    {
         unset($this->orderProducts[$index]);
         $this->orderProducts = array_values($this->orderProducts);
     }
-    
+
     public function render()
     {
         return view('livewire.cashier-panel.transaction.transaction-form',[
@@ -54,13 +58,13 @@ class TransactionForm extends Component
             'PaymentDetailData' =>  PaymentDetail::orderBy('payment_detail_name', 'ASC')->get()
         ]);
     }
-    
+
     public function ResetDetails($index)
     {
         $this->orderProducts[$index]['payment_detail_id']=null;
         $this->orderProducts[$index]['price']=null;
     }
-    
+
     public function hydrate(){
         $this->emit('select2');
     }
@@ -73,7 +77,10 @@ class TransactionForm extends Component
         $this->payor_name           = $DATA['payor_name'];
         $this->mode_of_payment_id   = $DATA['mode_of_payment_id'];
         $this->date                 = $DATA['date'];
-        
+        $this->check_bank           = $DATA['check_bank'];
+        $this->check_number         = $DATA['check_number'];
+        $this->check_date           = $DATA['check_date'];
+        $this->note                 = $DATA['note'];
         $transactionpayments = TransactionPayment::all()->where('transaction_id', $this->TransactionID);
         $count_transaction=0;
         foreach ($transactionpayments as $transactionpayment) {
@@ -81,21 +88,24 @@ class TransactionForm extends Component
         }
 
     }
-    
+
     public function store()
     {
-        
+
         $this->data = ([
             'receipt_no'            => $this->receipt_no,
             'payor_name'            => $this->payor_name,
             'mode_of_payment_id'    => $this->mode_of_payment_id,
             'cashier_id'            => Auth::user()->id,
             'date'                  => $this->date,
+            'check_bank'            => $this->check_bank,
+            'check_number'          => $this->check_number,
+            'check_date'            => $this->check_date,
+            'note'                  => $this->note,
         ]);
-        
-        
+
         $this->validate([
-            'receipt_no'            => 'required||max:7||min:7',
+            'receipt_no'            => 'required||min:7||unique:transactions,receipt_no,'.$this->TransactionID,
             'payor_name'            => 'required',
             'mode_of_payment_id'    => 'required',
             'date'                  => 'required',
@@ -104,11 +114,19 @@ class TransactionForm extends Component
             'orderProducts.*.payment_detail_id'            => 'required',
             'orderProducts.*.qty'                     => 'required',
         ]);
-        
+
+        if ($this->mode_of_payment_id==2) {
+
+            $this->validate([
+                'check_bank'            => 'required',
+                'check_number'          => 'required',
+                'check_date'            => 'required',
+            ]);
+        }
         try {
             if($this->TransactionID){
                 Transaction::find($this->TransactionID)->update($this->data);
-                
+
                 TransactionPayment::where('transaction_id', $this->TransactionID)->delete(); // Delete all
                 // Copying TransactionID to TransactioPayment
                 for ($i=0; $i < count($this->orderProducts); $i++) {
@@ -118,7 +136,7 @@ class TransactionForm extends Component
                 foreach ($this->orderProducts as $orderproducts) {
                     TransactionPayment::create($orderproducts);
                 }
-                
+
                 $this->emit('alert_update');
                 date_default_timezone_set('Etc/GMT-8');
                 $log_data = ([
@@ -127,20 +145,20 @@ class TransactionForm extends Component
                     'created_at'    =>  date('Y-m-d H:i:s')
                 ]);
                 UserActivityLogsDatabase::create($log_data);
-                
+
             }else{
                 $show=Transaction::create($this->data);
-                
+
                 // Copying TransactionID to TransactioPayment
                 for ($i=0; $i < count($this->orderProducts); $i++) {
                     $this->orderProducts[$i]['transaction_id']=$show['id'];
                     $this->orderProducts[$i]['transaction_category']=$show['id'].$this->orderProducts[$i]['payment_categories_id'];
                 }
-                
+
                 foreach ($this->orderProducts as $orderproducts) {
                     TransactionPayment::create($orderproducts);
                 }
-                
+
                 $this->emit('alert_store');
                 date_default_timezone_set('Etc/GMT-8');
                 $log_data = ([
@@ -149,12 +167,12 @@ class TransactionForm extends Component
                     'created_at'    =>  date('Y-m-d H:i:s')
                     ]);
                 UserActivityLogsDatabase::create($log_data);
-                
+
                 $this->emit('closeTransactionModal');
                 $this->emit('refresh_transaction_table');
                 $this->resetErrorBag();
                 $this->resetValidation();
-                
+
                 $Collecting_Officer = User::find(1);
                 $this->reset();
                 $pdfContent = PDF::loadView('livewire.cashier-panel.transaction.transaction-receipt',[
@@ -168,25 +186,29 @@ class TransactionForm extends Component
                     'TransactionPayment' =>  TransactionPayment::all()->where('transaction_id', $show['id']),
                     'total' => 0,
                     'Collecting_Officer' => $Collecting_Officer['name'],
-                    'numberToWords' => new NumberToWords()
+                    'numberToWords' => new NumberToWords(),
+                    'check_bank' => $show['check_bank'],
+                    'check_number' => $show['check_number'],
+                    'check_date' => date('m/d/Y', strtotime($this->check_date)),
+                    'note' => $show['note'],
                 ])->setPaper('Letter', 'Portrait')->output();
                 return response()->streamDownload(fn () => print($pdfContent),$show['payor_name']."_Receipt.pdf");
-                
+
             }
-            
+
         } catch (\Exception $e) {
-			dd($e);
+			// dd($e);
 			return back();
         }
-        
+
         $this->emit('closeTransactionModal');
         $this->emit('refresh_transaction_table');
         $this->reset();
         $this->resetErrorBag();
         $this->resetValidation();
     }
-    
-    
+
+
     public function closeTransactionForm(){
         $this->emit('closeTransactionModal');
         $this->emit('refresh_transaction_table');

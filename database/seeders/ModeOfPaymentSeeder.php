@@ -15,14 +15,17 @@ class ModeOfPaymentSeeder extends Seeder
     public function run()
     {
         $modeofpayment = [
-            [ 
+            [
             'mode_of_payment_name' => 'Cash',
             ],
-            [ 
+            [
             'mode_of_payment_name' => 'Check',
             ],
-            [ 
+            [
             'mode_of_payment_name' => 'Money Order',
+            ],
+            [
+            'mode_of_payment_name' => 'Other',
             ],
         ];
 

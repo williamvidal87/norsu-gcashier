@@ -8,11 +8,11 @@
             float: left;
             padding: 10px;
         }
-        
+
         .left, .right {
             width: 25%;
         }
-        
+
         .middle {
             width: 50%;
         }
@@ -20,7 +20,7 @@
             border: 1px solid black;
             border-collapse: collapse;
         }
-        @page { 
+        @page {
             margin-top: 0.52in;
             margin-left: 0.2in;
             margin-right: 4.6in;
@@ -36,11 +36,11 @@
             border-right: 2px solid #000000;
         }
     </style>
-    
-    <div style="position: fixed;margin-top:1.40in;margin-left: 0.2in">
+
+    <div style="position: fixed;margin-top:1.55in;margin-left: 0.2in">
         {{ $Date }}
     </div>
-    <div style="position: fixed;margin-top:2in;margin-left: 0.2in">
+    <div style="position: fixed;margin-top:2.15in;margin-left: 0.2in;font-size: 10pt">
         {{ $StudentName }}
     </div>
     <div style="position: fixed;margin-top:2.80in;margin-left: 0.10in;width:3.80in">
@@ -65,32 +65,26 @@
             </td>
         </tr>
         @endforeach
+
+        <tr style="border-collapse: collapse;border-style:hidden;">
+            <td style="width: 2.69in;height:0.18in;border-collapse: collapse;border-style:hidden;">
+            @if($note)
+                <div style="line-height: 20.50px;width:2.70in">
+                    {{ $note }}
+                </div>
+            @endif
+            </td>
+        </tr>
         </table>
     </div>
-    {{-- <div style="position: fixed;margin-top:2.80in;margin-left: 0.2in;line-height: 138%;width:2.67in">
-        @foreach($TransactionPayment as $transactionpayment)
-            {{ $transactionpayment->getPaymentDetail->payment_detail_name }}
-            {{ $transactionpayment->getPaymentDetail->purpose }}
-            <div style="align-text:left">25,000,000.00</div>
-            <br>
-        @endforeach
-    </div> --}}
-    {{-- <div style="position: fixed;margin-top: 2.80in;margin-left: 2.97in;line-height: 40%">
-        @foreach($TransactionPayment as $transactionpayment_price)
-            <p>{{ number_format($transactionpayment_price->price*$transactionpayment_price->qty, 2, '.', ',') }}</p>
-            <?php
-                // $total+=$transactionpayment_price->price*$transactionpayment_price->qty
-            ?>
-        @endforeach
-    </div> --}}
-    <div style="position: fixed;margin-top: 4.86in;margin-left: 3.05in">
+    <div style="position: fixed;margin-top: 4.75in;margin-left: 2.98in">
             <p>{{ number_format($total, 2, '.', ',') }}</p>
     </div>
-    <div style="position: fixed;margin-top: 5.10in;margin-left: 0.4in;line-height: 200%;">
+    <div style="position: fixed;margin-top: 4.94in;margin-left: 0.4in;line-height: 200%;">
             <p style="font-size: 10pt;text-transform:capitalize;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <?php
                     $sample_num=round($total, 2);
-                    
+
                     $numberTransformer = $numberToWords->getNumberTransformer('en');
                     echo $numberTransformer->toWords($sample_num).' pesos';
                     // echo convert_number_to_words($sample_num).' Pesos';
@@ -106,29 +100,40 @@
                 ?>
             </p>
     </div>
-    
-    {{-- @if($ModeOfPayment==1) --}}
-        <div style="position: fixed;margin-top: 5.98in;margin-left: 0.28in">
+
+    @if($ModeOfPayment==1)
+        <div style="position: fixed;margin-top: 5.77in;margin-left: 0.28in">
                 <div class="checkmark"></div>
         </div>
-    {{-- @endif --}}
-    {{-- @if($ModeOfPayment==2) --}}
-        <div style="position: fixed;margin-top: 6.16in;margin-left: 0.28in">
+    @endif
+    @if($ModeOfPayment==2)
+        <div style="position: fixed;margin-top: 5.94in;margin-left: 0.28in">
                 <div class="checkmark"></div>
         </div>
-    {{-- @endif --}}
-    {{-- @if($ModeOfPayment==3) --}}
-        <div style="position: fixed;margin-top: 6.35in;margin-left: 0.28in">
+
+        <div style="position: fixed;margin-top: 5.94in;margin-left: 1.60in">
+                <div>{{ $check_bank }}</div>
+        </div>
+        <div style="position: fixed;margin-top: 5.94in;margin-left: 2.30in">
+                <div>{{ $check_number }}</div>
+        </div>
+        <div style="position: fixed;margin-top: 5.94in;margin-left: 3.05in">
+                <div>{{ $check_date }}</div>
+        </div>
+
+    @endif
+    @if($ModeOfPayment==3)
+        <div style="position: fixed;margin-top: 6.12in;margin-left: 0.28in">
                 <div class="checkmark"></div>
         </div>
-    {{-- @endif --}}
-    
-    <div style="position: fixed;margin-top: 7in;margin-left: 2.36in">
+    @endif
+
+    <div style="position: fixed;margin-top: 6.70in;margin-left: 2.36in">
             <p>{{ $Collecting_Officer }}</p>
     </div>
-    
-    
-    
+
+
+
 </div>
 
 
